@@ -57,6 +57,10 @@ const ThoughtSchema = new Schema (
   }
 );
 
+const Thought = model('Thought', ThoughtSchema);
+
+module.exports = Thought;
+
 // Get total count of friends
 ThoughtSchema.virtual('reactionCount').get(function() {
   return this.reactions.length;
