@@ -1,25 +1,44 @@
+const res = require('express/lib/response');
 const { Thought, User } = require('../models');
 
 const thoughtController = {
+  getAllThought(req, res) {
+    Thought.find({})
+      // .populate({
+      //   path: 'thoughts',
+      //   select: '-__v'
+      // })
+      // .select('-__v')
+      // .sort({ _id: -1 })
+      .then(dbThoughtData => res.json(dbThoughtData))
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(400);
+      });
+  },
+
+
   // Add thought to user
-  addThought({ params, body }, res) {
-    console.log(body);
-    Thought.create(body)
-      .then(({ _id }) => {
-        return User.findOneAndUpdate(
-          { _id: params.userId },
-          { $push: { thoughts: _id } },
-          { new: true }
-        );
-      })
-      .then(dbUserData => {
-        if (!dbUserData) {
-          res.status(404).json({ message: 'No user found with this id!' });
-          return;
+  // Sample JSON Input:
+  // { 
+  //   "username": "lernantino",
+  //   "thoughtText": "Hiking in the Diamond Heads"
+  // }
+  addThought({ body }, res) {
+    User.exists(
+      { username: body.username.toLowerCase() }
+    )
+      .then(exists => {
+        if (exists) {
+          console.log(exists);
+          Thought.create(body)
+            .then(dbThoughtData => res.json(dbThoughtData))
+            .catch(err => res.json(err)
+          );
+        } else {
+          res.status(404).json({ message: `No user found with username: ${body.username}`})
         }
-        res.json(dbUserData);
       })
-      .catch(err => res.json(err));
   },
 
   // Add reaction to thought
