@@ -58,7 +58,7 @@ const userController = {
     try {
       const user = await User.findOneAndDelete({ _id: params.id });
       if (user) {
-        const thought = await Thought.deleteMany({username: user.username});
+        const thought = await Thought.deleteMany({username: user.username.toLowerCase()});
         res.json({message: `The user ${user._id} has been removed and the associated thoughts`});
       } else {
         res.status(500).json({ message: 'User does not exist'});

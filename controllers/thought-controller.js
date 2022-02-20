@@ -22,7 +22,7 @@ const thoughtController = {
       if (user) {
         const thought = await Thought.create(body);
         await User.findOneAndUpdate(
-          { _id: body.userId},
+          { username: body.username.toLowerCase()},
           { $push: { thoughts: thought._id}},
           { new: true }
         )
