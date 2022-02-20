@@ -16,7 +16,7 @@ router
 
 // /api/thoughts/:userId/:thoughtId
 router
-  .route('/:userId/:thoughtId')
+  .route('/:thoughtId')
   .delete(removeThought);
 
 router
