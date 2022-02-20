@@ -14,20 +14,18 @@ router
   .post(addThought)
   .get(getAllThought);
 
-// Add new Reaction
-router
-  .route('/:userId/:thoughtId')
-  .put(addReaction)
-  .delete(removeThought)
-
-// Remove Reaction
-router
-  .route('/:userId/:thoughtId/:ReactionId')
-  .delete(removeReaction);
-
-// /api/Thoughts/:userId/:thoughtId
+// /api/thoughts/:userId/:thoughtId
 router
   .route('/:userId/:thoughtId')
   .delete(removeThought);
+
+router
+  .route('/:thoughtId/reactions')
+  .put(addReaction);
+
+// api/thoughts/:userId/:thougthId/:reactionId
+router
+  .route('/:userId/:thoughtId/:reactionId')
+  .delete(removeReaction);
 
 module.exports = router;

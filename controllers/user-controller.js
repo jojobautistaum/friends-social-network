@@ -1,13 +1,14 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
   // Get all users
   getAllUser(req, res) {
     User.find({})
-      .populate('thoughts')
-      .exec(function(err,users) {
-        if (err)
-      })
+
+    // .populate({
+    //   path: 'thoughts',
+    //   select: '-__v'
+    // })
       // .select('-__v')
       // .sort({ _id: -1 })
       .then(dbUserData => res.json(dbUserData))
@@ -53,10 +54,18 @@ const userController = {
   },
 
   // Delete user
-  deleteUser({ params }, res) {
-    User.findOneAndDelete({ _id: params.id })
-      .then(dbUserData => res.json(dbUserData))
-      .catch(err => res.json(err));
+  async deleteUser({ params }, res) {
+    try {
+      const user = await User.findOneAndDelete({ _id: params.id });
+      if (user) {
+        const thought = await Thought.deleteMany({username: user.username});
+        res.json({message: `The user ${user._id} has been removed`});
+      } else {
+        res.status(500).json({ message: 'User does not exist'});
+      }
+    } catch (error) {
+      res.json(error);
+    }
   },
 
   // Add friend to a user

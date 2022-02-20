@@ -17,6 +17,24 @@ const thoughtController = {
       });
   },
 
+  async addThought({ body }, res) {
+    try {
+      const user = await User.exists({ username: body.username.toLowerCase() });
+      if (user) {
+        const thought = await Thought.create(body);
+        await User.findOneAndUpdate(
+          { _id: body.userId},
+          { $push: { thoughts: thought._id}},
+          { new: true }
+        )
+        res.json(thought);
+      } else {
+        res.status(404).json({ message: `No user found with username: ${body.username}`});
+      }
+    } catch (error) {
+      res.json(error);
+    }
+  },
 
   // Add thought to user
   // Sample JSON Input:
@@ -24,22 +42,28 @@ const thoughtController = {
   //   "username": "lernantino",
   //   "thoughtText": "Hiking in the Diamond Heads"
   // }
-  addThought({ body }, res) {
-    User.exists(
-      { username: body.username.toLowerCase() }
-    )
-      .then(exists => {
-        if (exists) {
-          console.log(exists);
-          Thought.create(body)
-            .then(dbThoughtData => res.json(dbThoughtData))
-            .catch(err => res.json(err)
-          );
-        } else {
-          res.status(404).json({ message: `No user found with username: ${body.username}`})
-        }
-      })
-  },
+  // addThought({ body }, res) {
+  //   User.exists(
+  //     { username: body.username.toLowerCase() }
+  //   )
+  //     .then(exists => {
+  //       if (exists) {
+  //         console.log(exists);
+  //         Thought.create(body)
+  //           .then(dbThoughtData => {
+  //             User.findOneAndUpdate(
+
+  //             )
+  //             res.json(dbThoughtData)
+  //           })
+
+  //           .catch(err => res.json(err)
+  //         );
+  //       } else {
+  //         res.status(404).json({ message: `No user found with username: ${body.username}`})
+  //       }
+  //     })
+  // },
 
   // Add reaction to thought
   addReaction({ params, body }, res) {
