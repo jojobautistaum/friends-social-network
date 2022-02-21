@@ -5,7 +5,7 @@ const { Thought, User } = require('../models');
 const thoughtController = {
   async getAllThought(req, res) {
     try {
-      const thoughts = await Thought.find({});
+      const thoughts = await Thought.find({}).sort({_id: -1});
       if (thoughts) {
         res.json(thoughts);
       } else {

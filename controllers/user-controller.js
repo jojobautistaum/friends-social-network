@@ -4,7 +4,7 @@ const userController = {
   // Get all users
   async getAllUser(req, res) {
     try {
-      const users = await User.find({}).populate({path: 'thoughts', select: '-__v'});
+      const users = await User.find({}).populate({path: 'thoughts', select: '-__v'}).sort({_id: -1});
       if (!users) {
         return res.status(404).json({message: "Can't retrieve users!"});
       }
